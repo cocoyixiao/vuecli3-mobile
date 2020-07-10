@@ -1,4 +1,4 @@
-# vue-spa-demo
+# vuecli3-mobile
 一个用于手机端前台页面的VUE前端脚手架，主要目的是为了图片上传到CDN，同时也支持JS,CSS上传到CDN。上线时只需要把dist上的index.html上传到服务器上即可。
 
 # 其它
