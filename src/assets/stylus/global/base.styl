@@ -2,3 +2,64 @@
 @import './variable.styl'
 @import './mixin.styl'
 @import './common.styl'
+
+html
+  width: 100%
+  min-height: 100%
+
+body
+  width: 100%
+  min-height: 100%
+  background: $graybg
+  margin: 0
+#app
+  width: 100%;
+  min-height: 100%;
+.wrapper
+  width: 100%;
+  min-height: 100%;
+  position: relative
+
+/*平板*/
+@media screen and (min-width:600px) and (max-width:960px)
+  .wrapper
+    width: px2rem(375)
+    margin: 0 auto
+
+.tl-area
+  width: 100%
+  background: $white
+  box-shadow: 0 px2rem(5) px2rem(10) $ca000-01
+  box-sizing: border-box
+  mb(10)
+
+.ty-area
+  padding: px2rem(8) px2rem(12) px2rem(12)
+
+.area
+  margin: 0 px2rem(10) px2rem(10);
+  br(12);
+  background: $white;
+.loading
+  br(30)
+  width: px2rem(30)
+  height: px2rem(30)
+  margin: px2rem(10) auto
+  position: relative
+  border-top: px2rem(2) solid rgba(0, 0, 0, 0.2)
+  border-right: px2rem(2) solid rgba(0, 0, 0, 0.2)
+  border-bottom: px2rem(2) solid rgba(0, 0, 0, 0.2)
+  border-left: px2rem(2) solid #000
+  transform: translateZ(0)
+  animation: loadAnim 1.1s infinite linear
+
+  &::after
+    br(30)
+    width: px2rem(30)
+    height: px2rem(30)
+
+  @keyframes loadAnim
+    0%
+      transform: rotate(0deg)
+    100%
+      transform: rotate(360deg)

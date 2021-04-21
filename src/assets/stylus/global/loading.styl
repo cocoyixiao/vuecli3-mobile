@@ -1,0 +1,68 @@
+
+.loading-anim
+  width: px2rem(40)
+  height: px2rem(40)
+  position: relative
+  margin: 0 auto
+
+  span
+    display: inline-block
+    width: px2rem(8)
+    height: px2rem(8)
+    border-radius: 50%
+    background: #f0f0f0
+    position: absolute
+    -webkit-animation: load 1.04s ease infinite
+
+    &:nth-child(1)
+      left: 0
+      top: 50%
+      margin-top: px2rem(-4)
+      animation-delay:0.13s
+
+    &:nth-child(2)
+      left: px2rem(5)
+      top: px2rem(5)
+      animation-delay:0.26s
+
+    &:nth-child(3)
+      left: 50%
+      top: 0
+      margin-left: px2rem(-4)
+      animation-delay:0.39s
+
+    &:nth-child(4)
+      top: px2rem(5)
+      right: px2rem(5)
+      animation-delay:0.52s
+
+    &:nth-child(5)
+      right: 0
+      top: 50%
+      margin-top: px2rem(-4)
+      animation-delay:0.65s
+
+    &:nth-child(6)
+      right: px2rem(5)
+      bottom: px2rem(5)
+      animation-delay:0.78s
+
+    &:nth-child(7)
+      bottom: 0
+      left: 50%
+      margin-left: px2rem(-4)
+      animation-delay:0.91s
+
+    &:nth-child(8)
+      bottom: px2rem(5)
+      left: px2rem(5)
+      animation-delay:1.04s
+
+@keyframes load
+  0%
+    transform: scale(1)
+    opacity: 1
+  
+  100%
+    transform: scale(.3)
+    opacity: 0.5

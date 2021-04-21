@@ -1,0 +1,14 @@
+mixin favicon()
+  link(rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon")
+
+mixin analytics()
+  //- add your analygics here
+  //- include ./partial/_google
+  //- include ./partial/_growingio
+  //- include ./partial/_sensorsdata
+  include ./partial/_baidu
+
+
+mixin meta-seo()
+  meta(name="keyword" content="")
+  meta(name="description" content="")
