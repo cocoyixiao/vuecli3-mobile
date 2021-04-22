@@ -3,15 +3,13 @@ const isDev = process.env.NODE_ENV == 'development'
 const resolve = dir => {
   return path.join(__dirname, dir)
 }
+const externals = {
+  vue: 'Vue',
+  axios: 'axios'
+}
 
 // 配置上传oss的地址前缀
 const cdnPath = '//ceshidomain.com/static/'
-// 配置pages多页面获取当前文件夹下的html和js
-require('./config/create-views-html.js')()
-// 静态文件转移到public文件夹下
-require('./config/create-static-html.js')()
-const getEntry = require('./config/entry.js')
-const pages = getEntry('./views/**/*.')
 
 const cdn = {
   css: [],
@@ -21,12 +19,9 @@ const cdn = {
   ]
 }
 
-const externals = {
-  vue: 'Vue',
-  axios: 'axios'
-}
+const getEntry = require('./config/entry.js')
+const pages = getEntry('./views/**/*.')
 
-console.log(pages)
 module.exports = {
   pages,
   publicPath: isDev ? '/' : '/',

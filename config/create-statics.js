@@ -40,7 +40,6 @@ function getAllPugs() {
   let pugs = {}
   // 读取pugsPath/底下所有的.pug文件
   const pugPath = path.join(__dirname, '..', pugStatic)
-  console.log(pugPath)
   glob.sync(pugPath).forEach(function(entry) {
     const pname = entry
       .split('/')
