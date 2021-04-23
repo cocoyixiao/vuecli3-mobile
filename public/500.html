@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="charset=utf-8">
+    <title>测试网站</title>
+    <style>
+      .notice {
+        margin: 100px auto;
+        text-align:center;
+        font-family: Roboto;
+      }
+      .text {
+        font-size: 24px;
+        color: #6e60c2;
+      }
+      img, b {
+        vertical-align: middle;
+        font-size: 64px;
+        color: #6e60c2;
+      }
+      button {
+        width: 17em;
+        height: 3em;
+        border: none;
+        border-radius: 100px;
+        background: #6e60c2;
+        color: white;
+        font-size: 16px;
+        margin-top: 10px;
+        cursor: pointer;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="notice">
+      <div class="img404"><b>500</b></div>
+      <div class="text">Internal Server Error</div>
+      <button onclick="history.back(-1)">Back</button>
+      <pre style="color:transparent"></pre>
+    </div>
+  </body>
+</html>

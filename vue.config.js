@@ -1,14 +1,44 @@
 const path = require('path')
-
 const isDev = process.env.NODE_ENV == 'development'
 const resolve = dir => {
   return path.join(__dirname, dir)
 }
-const cdnPath = '//cdnbaidu.com/'
+const externals = {
+  vue: 'Vue',
+  axios: 'axios'
+}
+
+// 配置上传oss的地址前缀
+const cdnPath = '//ceshidomain.com/static/'
+
+const cdn = {
+  css: [],
+  js: [
+    'http://ceshidomain.com/static/js/lib/axios.0.20.0-0.min.js',
+    'http://ceshidomain.com/static/js/lib/vue.2.6.11.min.js'
+  ]
+}
+
+const getEntry = require('./config/entry.js')
+const pages = getEntry('./views/**/*.')
 
 module.exports = {
-  publicPath: isDev ? '/' : cdnPath, // 这个地方就是你的cdn的地址
+  pages,
+  publicPath: isDev ? '/' : '/',
   chainWebpack: config => {
+    // 外部文件引入
+    if (!isDev) {
+      config.externals(externals)
+      // 生产环境注入cdn
+      const entry = Object.keys(pages)
+      for (const iterator of entry) {
+        config.plugin(`html-${iterator}`).tap(args => {
+          args[0].cdn = cdn
+          return args
+        })
+      }
+    }
+
     config.resolve.symlinks(true)
     // 采用pug格式写html
     config.module
@@ -26,22 +56,22 @@ module.exports = {
       .options({
         limit: 10,
         // 根据环境使用cdn或相对路径
-        publicPath: (url, resourcePath, context) =>
-          handleImgDir(url, resourcePath, context, true),
-        outputPath: handleImgDir,
-        name: isDev ? '/[name].[ext]' : '/[name]-[hash:8].[ext]'
+        publicPath: isDev ? 'images' : cdnPath + 'images',
+        outputPath: 'images',
+        name: isDev ? '[name].[ext]' : '[name]-[hash:8].[ext]'
       })
       .end()
 
     config.resolve.alias
       // key,value自行定义，比如.set('@assets', resolve('src/assets'))
       .set('@assets', resolve('src/assets'))
-      .set('@components', resolve('src/components'))
-      .set('@views', resolve('src/views'))
+      .set('@components', resolve('src/js/components'))
       .set('@css', resolve('src/assets/stylus'))
       .set('@images', resolve('src/assets/images'))
-    // 处理全局stylus
-    globalStylusRule(config)
+      .set('@api', resolve('src/js/api'))
+      .set('@utils', resolve('src/js/utils'))
+      .set('@lib', resolve('src/js/lib'))
+      .set('@pages', resolve('src/js/pages'))
   },
   // 打包时不生成.map文件
   productionSourceMap: false,
@@ -52,38 +82,15 @@ module.exports = {
     overlay: true,
     open: true,
     proxy: {
-      '/shopRest/*': {
-        target: 'http://127.0.0.1:9090', // 接口域名
+      '/feRest': {
+        target: 'http://test-api.ceshidomain.com/', // 接口域名
         ws: true,
         pathRewrite: {
-          '^/shopRest': ''
+          '^/feRest': ''
         },
         changeOrigin: true // 是否跨域
       }
     },
-    openPage: './'
+    public: 'localhost:8080' // 本地ip
   }
-}
-
-function globalStylusRule(config) {
-  const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
-  types.forEach(type => {
-    const rule = config.module.rule('stylus').oneOf(type)
-    rule
-      .use('style-resource')
-      .loader('style-resources-loader')
-      .options({
-        patterns: [
-          path.resolve(__dirname, './src/assets/stylus/global/base.styl')
-        ]
-      })
-  })
-}
-
-// 图片相对路径获取，正式环境加上cdn的绝对路径
-function handleImgDir(url, resourcePath, context, isPublicDir = false) {
-  const relativePath = path.relative(context, resourcePath)
-  let furl = path.dirname(relativePath).replace('src/assets/', '')
-  if (!isDev && isPublicDir) furl = cdnPath + furl
-  return `${furl}${url}`
 }
