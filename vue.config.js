@@ -14,8 +14,8 @@ const cdnPath = '//ceshidomain.com/static/'
 const cdn = {
   css: [],
   js: [
-    'http://ceshidomain.com/static/js/lib/axios.0.20.0-0.min.js',
-    'http://ceshidomain.com/static/js/lib/vue.2.6.11.min.js'
+    cdnPath + 'js/lib/axios.0.20.0-0.min.js',
+    cdnPath + 'js/lib/vue.2.6.11.min.js'
   ]
 }
 
