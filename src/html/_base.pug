@@ -1,6 +1,7 @@
 //- Base template for all pages that
 //- need vue,vuex,vue-router,vue-i18n, axios and moment
 include _global-vars
+include _flex-js
 include _global-mixins
 doctype html
 html
@@ -18,6 +19,6 @@ html
   body
     block main
     block libjs
-    script(src="/js/lib/vue.2.6.11.js")
-    script(src="/js/lib/axios.0.20.0-0.js")
+    script(src="/js/lib/vue.2.6.11.min.js")
+    script(src="/js/lib/axios.0.20.0-0.min.js")
     block js

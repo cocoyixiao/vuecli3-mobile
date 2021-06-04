@@ -5,6 +5,7 @@ const path = require('path')
 const chalk = require('chalk')
 const beautify = require('js-beautify').js
 const createStatic = require('./create-statics')
+const isDev = process.env.NODE_ENV === 'development'
 const resolve = dir => {
   return path.join(__dirname, dir)
 }
@@ -42,7 +43,10 @@ function handleHtml(key) {
   return new Promise((resolved, reject) => {
     const pugs = getAllPugs()
     //pretty : ture 相当于beauty格式化一下输出的代码
-    const pugStr = pug.renderFile(pugs[key], { pretty: true })
+    let htmlStr = pug.renderFile(pugs[key], { pretty: true })
+    if (!isDev) {
+      htmlStr = replaceJsPath(htmlStr)
+    }
     const viewsPath = resolve('../views/' + key)
     const exists = fs.existsSync(viewsPath)
     if (!exists) {
@@ -53,13 +57,21 @@ function handleHtml(key) {
       })
     }
     // 把html内容写入到对应目录的文件中
-    fs.writeFileSync(viewsPath + '/index.html', pugStr)
+    fs.writeFileSync(viewsPath + '/index.html', htmlStr)
     const obj = {
       name: key,
       path: path.relative(__dirname, viewsPath + '/index.html')
     }
     resolved(obj)
   })
+}
+
+function replaceJsPath(str) {
+  const scriptReg = /<script(.*?)src="(.*?)">/gi
+  const temp = str.replace(scriptReg, (re, $1, $2) => {
+    return re.replace($2, '//testcdn.xxx.cn' + $2)
+  })
+  return temp
 }
 
 function creatMainJs() {
