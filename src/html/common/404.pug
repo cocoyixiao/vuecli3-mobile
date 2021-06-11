@@ -1,13 +1,11 @@
-include ../_global-vars
-
-doctype html
-html
-  head
-    include ../partial/_404-500
-  body
-    .notice
-      .img404
-        b 404
-      .text Sorry, Page Not Found
-      button(onclick="history.back(-1)") Back
-
+extends ../_base-static
+block meta
+  include ../partial/_404-500
+block title
+  title 404-#{websiteTitle}
+block main
+  .notice
+    .img404
+      b 404
+    .text Sorry, Page Not Found
+    button(onclick="history.back(-1)") Back
