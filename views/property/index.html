@@ -1,123 +1,4 @@
-
-<script>
-  ;(function(win, lib) {
-  var doc = win.document;
-  var docEl = doc.documentElement;
-  var metaEl = doc.querySelector('meta[name="viewport"]');
-  var flexibleEl = doc.querySelector('meta[name="flexible"]');
-  var dpr = 0;
-  var scale = 0;
-  var tid;
-  var flexible = lib.flexible || (lib.flexible = {});
-  
-  if (metaEl) {
-      console.warn('将根据已有的meta标签来设置缩放比例');
-      var match = metaEl.getAttribute('content').match(/initial\-scale=([\d\.]+)/);
-      if (match) {
-          scale = parseFloat(match[1]);
-          dpr = parseInt(1 / scale);
-      }
-  } else if (flexibleEl) {
-      var content = flexibleEl.getAttribute('content');
-      if (content) {
-          var initialDpr = content.match(/initial\-dpr=([\d\.]+)/);
-          var maximumDpr = content.match(/maximum\-dpr=([\d\.]+)/);
-          if (initialDpr) {
-              dpr = parseFloat(initialDpr[1]);
-              scale = parseFloat((1 / dpr).toFixed(2));
-          }
-          if (maximumDpr) {
-              dpr = parseFloat(maximumDpr[1]);
-              scale = parseFloat((1 / dpr).toFixed(2));
-          }
-      }
-  }
-  
-  if (!dpr && !scale) {
-      var isAndroid = win.navigator.appVersion.match(/android/gi);
-      var isIPhone = win.navigator.appVersion.match(/iphone/gi);
-      var devicePixelRatio = win.devicePixelRatio;
-      if (isIPhone) {
-          // iOS下，对于2和3的屏，用2倍的方案，其余的用1倍方案
-          if (devicePixelRatio >= 3 && (!dpr || dpr >= 3)) {
-              dpr = 3;
-          } else if (devicePixelRatio >= 2 && (!dpr || dpr >= 2)){
-              dpr = 2;
-          } else {
-              dpr = 1;
-          }
-      } else {
-          // 其他设备下，仍旧使用1倍的方案
-          dpr = 1;
-      }
-      scale = 1 / dpr;
-  }
-  
-  docEl.setAttribute('data-dpr', dpr);
-  if (!metaEl) {
-      metaEl = doc.createElement('meta');
-      metaEl.setAttribute('name', 'viewport');
-      metaEl.setAttribute('content', 'initial-scale=' + scale + ', maximum-scale=' + scale + ', minimum-scale=' + scale + ', user-scalable=no');
-      if (docEl.firstElementChild) {
-          docEl.firstElementChild.appendChild(metaEl);
-      } else {
-          var wrap = doc.createElement('div');
-          wrap.appendChild(metaEl);
-          doc.write(wrap.innerHTML);
-      }
-  }
-  
-  function refreshRem(){
-      var width = docEl.getBoundingClientRect().width;
-      if (width / dpr > 540) {
-          width = 540 * dpr;
-      }
-      var rem = width / 10;
-      docEl.style.fontSize = rem + 'px';
-      flexible.rem = win.rem = rem;
-  }
-  
-  win.addEventListener('resize', function() {
-      clearTimeout(tid);
-      tid = setTimeout(refreshRem, 300);
-  }, false);
-  win.addEventListener('pageshow', function(e) {
-      if (e.persisted) {
-          clearTimeout(tid);
-          tid = setTimeout(refreshRem, 300);
-      }
-  }, false);
-  
-  if (doc.readyState === 'complete') {
-      doc.body.style.fontSize = 12 * dpr + 'px';
-  } else {
-      doc.addEventListener('DOMContentLoaded', function(e) {
-          doc.body.style.fontSize = 12 * dpr + 'px';
-      }, false);
-  }
-  
-  
-  refreshRem();
-  
-  flexible.dpr = win.dpr = dpr;
-  flexible.refreshRem = refreshRem;
-  flexible.rem2px = function(d) {
-      var val = parseFloat(d) * this.rem;
-      if (typeof d === 'string' && d.match(/rem$/)) {
-          val += 'px';
-      }
-      return val;
-  }
-  flexible.px2rem = function(d) {
-      var val = parseFloat(d) / this.rem;
-      if (typeof d === 'string' && d.match(/px$/)) {
-          val += 'rem';
-      }
-      return val;
-  }
-  
-  })(window, window['lib'] || (window['lib'] = {}));
-</script><!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta content="charset=utf-8">
@@ -136,11 +17,130 @@
     <script>!function(b,i,a){var j="nols",h="innerHTML",g="execScript",c=b.$LB=b.$LB||{};c.c=function(l,d,m){i.cookie=l+"="+d+";path=/;"+(m||"expires=Tue, 14 Oct 2042 23:42:42 GMT")};c.dc=function(d){c.c(d,"","expires=Thu, 01 Jan 1970 00:00:00 GMT")};try{a[j]=0;c.sv=function(d){a[d]=i.getElementById(d)[h]};c.ld=function(l){var e;for(e=0;e<l.length;e++){if(!a[l[e][0]]){c.c("lsv",0);location.reload();return}}c.dc("lsv");for(e=0;e<l.length;e++){var d=a[l[e][0]]||"",n=l[e][1],m=l[e][2];var k=i.createElement(n=="js"?"script":"style");if(i[g]&&n=="js"&&!m){i[g](d)}else{if(m){k.src="/static/"+n+"/lib/"+id+".min.js"}else{k[h]=d}i.head.appendChild(k)}}}}catch(f){c.c(j,1)}}(this,document,localStorage);</script>
     <title>测试网站</title>
     <meta name="keyword" content="">
+    <script>
+      ;(function(win, lib) {
+      var doc = win.document;
+      var docEl = doc.documentElement;
+      var metaEl = doc.querySelector('meta[name="viewport"]');
+      var flexibleEl = doc.querySelector('meta[name="flexible"]');
+      var dpr = 0;
+      var scale = 0;
+      var tid;
+      var flexible = lib.flexible || (lib.flexible = {});
+      
+      if (metaEl) {
+          console.warn('将根据已有的meta标签来设置缩放比例');
+          var match = metaEl.getAttribute('content').match(/initial\-scale=([\d\.]+)/);
+          if (match) {
+              scale = parseFloat(match[1]);
+              dpr = parseInt(1 / scale);
+          }
+      } else if (flexibleEl) {
+          var content = flexibleEl.getAttribute('content');
+          if (content) {
+              var initialDpr = content.match(/initial\-dpr=([\d\.]+)/);
+              var maximumDpr = content.match(/maximum\-dpr=([\d\.]+)/);
+              if (initialDpr) {
+                  dpr = parseFloat(initialDpr[1]);
+                  scale = parseFloat((1 / dpr).toFixed(2));
+              }
+              if (maximumDpr) {
+                  dpr = parseFloat(maximumDpr[1]);
+                  scale = parseFloat((1 / dpr).toFixed(2));
+              }
+          }
+      }
+      
+      if (!dpr && !scale) {
+          var isAndroid = win.navigator.appVersion.match(/android/gi);
+          var isIPhone = win.navigator.appVersion.match(/iphone/gi);
+          var devicePixelRatio = win.devicePixelRatio;
+          if (isIPhone) {
+              // iOS下，对于2和3的屏，用2倍的方案，其余的用1倍方案
+              if (devicePixelRatio >= 3 && (!dpr || dpr >= 3)) {
+                  dpr = 3;
+              } else if (devicePixelRatio >= 2 && (!dpr || dpr >= 2)){
+                  dpr = 2;
+              } else {
+                  dpr = 1;
+              }
+          } else {
+              // 其他设备下，仍旧使用1倍的方案
+              dpr = 1;
+          }
+          scale = 1 / dpr;
+      }
+      
+      docEl.setAttribute('data-dpr', dpr);
+      if (!metaEl) {
+          metaEl = doc.createElement('meta');
+          metaEl.setAttribute('name', 'viewport');
+          metaEl.setAttribute('content', 'initial-scale=' + scale + ', maximum-scale=' + scale + ', minimum-scale=' + scale + ', user-scalable=no');
+          if (docEl.firstElementChild) {
+              docEl.firstElementChild.appendChild(metaEl);
+          } else {
+              var wrap = doc.createElement('div');
+              wrap.appendChild(metaEl);
+              doc.write(wrap.innerHTML);
+          }
+      }
+      
+      function refreshRem(){
+          var width = docEl.getBoundingClientRect().width;
+          if (width / dpr > 540) {
+              width = 540 * dpr;
+          }
+          var rem = width / 10;
+          docEl.style.fontSize = rem + 'px';
+          flexible.rem = win.rem = rem;
+      }
+      
+      win.addEventListener('resize', function() {
+          clearTimeout(tid);
+          tid = setTimeout(refreshRem, 300);
+      }, false);
+      win.addEventListener('pageshow', function(e) {
+          if (e.persisted) {
+              clearTimeout(tid);
+              tid = setTimeout(refreshRem, 300);
+          }
+      }, false);
+      
+      if (doc.readyState === 'complete') {
+          doc.body.style.fontSize = 12 * dpr + 'px';
+      } else {
+          doc.addEventListener('DOMContentLoaded', function(e) {
+              doc.body.style.fontSize = 12 * dpr + 'px';
+          }, false);
+      }
+      
+      
+      refreshRem();
+      
+      flexible.dpr = win.dpr = dpr;
+      flexible.refreshRem = refreshRem;
+      flexible.rem2px = function(d) {
+          var val = parseFloat(d) * this.rem;
+          if (typeof d === 'string' && d.match(/rem$/)) {
+              val += 'px';
+          }
+          return val;
+      }
+      flexible.px2rem = function(d) {
+          var val = parseFloat(d) / this.rem;
+          if (typeof d === 'string' && d.match(/px$/)) {
+              val += 'rem';
+          }
+          return val;
+      }
+      
+      })(window, window['lib'] || (window['lib'] = {}));
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script src="/js/lib/vue.2.6.11.min.js"></script>
-    <script src="/js/lib/axios.0.20.0-0.min.js"></script>
-    <script src="/js/lib/swiper-bundle.min.js"></script>
+    <script src="//testcdn.xxx.cn/js/lib/vue.2.6.11.min.js"></script>
+    <script src="//testcdn.xxx.cn/js/lib/axios.0.20.0-0.min.js"></script>
+    <script src="//testcdn.xxx.cn/js/lib/swiper-bundle.min.js"></script>
   </body>
 </html>
