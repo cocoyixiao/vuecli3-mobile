@@ -21,7 +21,6 @@ const cdn = {
 
 const getEntry = require('./config/entry.js')
 const pages = getEntry('./views/**/*.')
-
 module.exports = {
   pages,
   publicPath: isDev ? '/' : '/',

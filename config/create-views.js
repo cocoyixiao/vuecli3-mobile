@@ -11,8 +11,8 @@ const resolve = dir => {
 }
 
 const config = {
-  pugPath: './src/html/pages/*',
-  vuePath: './src/js/pages/*/*'
+  pugPath: './src/html/pages/**',
+  vuePath: './src/js/pages/**'
 }
 
 function creatHtml() {
@@ -42,12 +42,14 @@ function creatHtml() {
 function handleHtml(key) {
   return new Promise((resolved, reject) => {
     const pugs = getAllPugs()
+    console.log(pugs)
     //pretty : ture 相当于beauty格式化一下输出的代码
     let htmlStr = pug.renderFile(pugs[key], { pretty: true })
     if (!isDev) {
       htmlStr = replaceJsPath(htmlStr)
     }
-    const viewsPath = resolve('../views/' + key)
+    const relaPath = path.relative('./src/html/pages/', path.dirname(pugs[key]))
+    const viewsPath = resolve('../views/' + relaPath + '/' + key)
     const exists = fs.existsSync(viewsPath)
     if (!exists) {
       fs.mkdirSync(viewsPath, { recursive: true }, err => {
@@ -76,7 +78,8 @@ function replaceJsPath(str) {
 
 function creatMainJs() {
   // 生成main.js时，vue文件和pug文件都必须存在
-  const pugKeys = Object.keys(getAllPugs())
+  const pugs = getAllPugs()
+  const pugKeys = Object.keys(pugs)
   const vueKeys = Object.keys(getAllVues())
   return new Promise((resolved, reject) => {
     // 判断有没有找到相对应名字的.vue和.pug文件
@@ -92,7 +95,7 @@ function creatMainJs() {
     let list = []
     resultArr.forEach(key => {
       // 开始生成main.js
-      list.push(createOrCopyMainJs(key))
+      list.push(createOrCopyMainJs(pugs[key], key))
     })
     Promise.all(list)
       .then(res => {
@@ -104,10 +107,12 @@ function creatMainJs() {
   })
 }
 
-function createOrCopyMainJs(name) {
+function createOrCopyMainJs(pugPath, name) {
   return new Promise((resolved, reject) => {
-    const targetPath = resolve('../views/' + name)
+    const relaPath = path.relative('./src/html/pages/', path.dirname(pugPath))
+    const targetPath = resolve('../views/' + relaPath + '/' + name)
     // 判断有没有目录路径
+    console.log(targetPath)
     const exists = fs.existsSync(targetPath)
     if (!exists) {
       fs.mkdirSync(targetPath, { recursive: true }, err => {
@@ -163,12 +168,14 @@ function createOrCopyMainJs(name) {
 function getAllPugs() {
   let pugs = {}
   // 读取pugsPath/底下所有的.pug文件
-  glob.sync(config.pugPath + '.pug').forEach(function(entry) {
-    const pname = entry
-      .split('/')
-      .splice(-1)[0]
-      .split('.')[0]
-    pugs[pname] = entry
+  glob.sync(config.pugPath).forEach(function(entry) {
+    if (entry.indexOf('.pug') > -1) {
+      const pname = entry
+        .split('/')
+        .splice(-1)[0]
+        .split('.')[0]
+      pugs[pname] = entry
+    }
   })
   return pugs
 }
@@ -176,9 +183,11 @@ function getAllPugs() {
 function getAllVues() {
   // 读取vuePath/底下所有的vue文件
   let vues = {}
-  glob.sync(config.vuePath + '.vue').forEach(function(entry) {
-    const pname = entry.split('/').splice(-2, 1)[0]
-    vues[pname] = entry
+  glob.sync(config.vuePath).forEach(function(entry) {
+    if (entry.indexOf('.vue') > -1) {
+      const pname = entry.split('/').splice(-2, 1)[0]
+      vues[pname] = entry
+    }
   })
   return vues
 }
